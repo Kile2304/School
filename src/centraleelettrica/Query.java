@@ -94,4 +94,9 @@ public class Query {
         return tableList;
     }
 
+
+    public Relazione sendRemove(String delete) {
+        return null;
+    }
+
 }

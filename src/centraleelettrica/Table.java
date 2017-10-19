@@ -29,7 +29,7 @@ class Table extends JPanel implements ActionListener {
 
     private String[] columnName;
 
-    private static final String QUERY = "select * from employees";
+    private static final String QUERY = "select * from ";
 
     public Table() {
         isCentrale = true;
@@ -65,13 +65,13 @@ class Table extends JPanel implements ActionListener {
             String[] temp = i == 0 ? columnName : text[i - 1];
 
             tot = 0;
+            int y = i * PIXEL + (PIXEL / 4 * 3);
             for (int j = 0; j < columnName.length; j++) {
                 g.drawLine(tot, i * PIXEL, tot, (i + 1) * PIXEL);   //VERTICALE
 
                 tot += large[j] / 4;
 
                 int x = tot;
-                int y = i * PIXEL + (PIXEL / 4 * 3);
 
                 int actualWidth = (large[0] - g.getFontMetrics().stringWidth(temp[j])) / 2;
                 int centramento = actualWidth > 0 ? actualWidth : 0;
@@ -80,12 +80,39 @@ class Table extends JPanel implements ActionListener {
                 tot += large[j] + large[j] / 4;
 
             }
+            if (i != 0) {
+
+                JButton delete = new JButton("-");
+
+                String where = null;
+                for (int k = 0; k < temp.length; k++) {
+                    where += columnName[k] + "=" + temp[k];
+                }
+                delete.setActionCommand("delete * from " + Gui.table + " where " + where);
+
+                delete.setMargin(null);
+                delete.setBounds(tot + PIXEL / 3 * 2, y - PIXEL / 2, PIXEL * 2, PIXEL / 2);
+                delete.setFont(new Font("default", Font.BOLD, font.getSize()));
+
+                delete.addActionListener(this);
+
+                add(delete);
+
+                JButton modify = new JButton("+");
+                modify.setActionCommand("insert " + delete.getActionCommand());
+                modify.setFont(new Font("default", Font.BOLD, 13));
+                modify.setMargin(null);
+                modify.setBounds(tot + PIXEL / 3 * 10, y - PIXEL / 2, PIXEL * 2, PIXEL / 2);
+                modify.addActionListener(this);
+
+                add(modify);
+            }
 
             g.drawLine(tot, i * PIXEL, tot, (i + 1) * PIXEL);   //VERTICALE
             g.drawLine(0, (i + 1) * PIXEL, tot, (i + 1) * PIXEL);
         }
 
-        setPreferredSize(new Dimension(tot + 1, text.length * PIXEL));
+        setPreferredSize(new Dimension(tot + 1 + PIXEL * 6, text.length * PIXEL));
         revalidate();
 
     }
@@ -99,11 +126,11 @@ class Table extends JPanel implements ActionListener {
             for (int i = 0; i < text.length; i++) {
                 String[] temp = text[i];
                 for (int j = 0; j < temp.length; j++) {
-                        int actualWidth = g.getFontMetrics().stringWidth(temp[j]);
+                    int actualWidth = g.getFontMetrics().stringWidth(temp[j]);
 
-                        if (actualWidth > max[j]) {
-                            max[j] = actualWidth;
-                        }
+                    if (actualWidth > max[j]) {
+                        max[j] = actualWidth;
+                    }
                 }
             }
             PIXEL = g.getFontMetrics().getHeight();
@@ -132,7 +159,7 @@ class Table extends JPanel implements ActionListener {
 
     public void aggiornaTabella(Relazione rel) {
         if (rel == null) {
-            rel = new Query().sendSelect(QUERY);
+            rel = new Query().sendSelect(QUERY + Gui.table);
         }
 
         columnName = rel.getColumnName();
@@ -144,31 +171,17 @@ class Table extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        /*isCentrale = true;
-        CentraleElettrica centrale = new CentraleElettrica(true);
-        centrale.action("select production");
-        columnName = new String[]{"CODICE", "MESE", "ANNO", "POTENZA"};
-        String[] temp = centrale.getContentFile();
-
-        ArrayList<String> t = new ArrayList<>();
-        for (int i = 0; i < temp.length; i++) {
-            if (temp[i].split(" ")[1].equals(e.getActionCommand())) {
-                t.add(temp[i]);
-            }
-        }
-        text = new String[t.size()];
-        for (int i = 0; i < text.length; i++) {
-            text[i] = t.get(i);
-        }
-
-        numero = text.length;
-
-        Listener.change("produzioni", "centrale", false);
-        if (text.length > 0) {
-            repaint();
+        String[] c = e.getActionCommand().split(" ");
+        Relazione rel = null;
+        if (c.equals("delete")) {
+            rel = new Query().sendRemove(e.getActionCommand());
         } else {
-            revalidate();
-        }*/
+            String delete = "";
+            for (int i = 0; i < c.length; i++) {
+                delete += c[i] + " ";
+            }
+            rel = new Query().sendRemove(delete);
+        }
     }
 
 }

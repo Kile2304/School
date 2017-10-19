@@ -35,6 +35,8 @@ public class Gui extends JFrame {
     private static final int TESTHEIGHT = 1080;
 
     private JScrollPane scroll;
+    
+    public static String table = "";
 
     public Gui() {
         super("Centrale Idroelettrica");
@@ -49,6 +51,14 @@ public class Gui extends JFrame {
         int height = device.getFullScreenWindow().getHeight();
         setSize(width, height);
 
+
+        west = west();
+        add(west, BorderLayout.WEST);
+
+        east = new JPanel();
+
+        eastNormal();
+        
         t = new Table();
         t.aggiornaTabella(null);
         t.setPreferredSize(new Dimension(width, height));
@@ -60,21 +70,13 @@ public class Gui extends JFrame {
 
         add(scroll, BorderLayout.CENTER);
 
-        west = west();
-        add(west, BorderLayout.WEST);
-
-        east = new JPanel();
-
-        eastNormal();
-
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         setVisible(true);
-
     }
 
     public void changeEnable(boolean aggiorna, String table) {
-        //t.changeEnable(aggiorna);
+        Gui.table = table;
         Relazione rel = new Query().sendSelect("select * from "+table);
         t.aggiornaTabella(rel);
     }
@@ -186,10 +188,12 @@ public class Gui extends JFrame {
 
         String[] tableList = new Query().getTable();
 
+        Gui.table = tableList[0];
+        
         for (int i = 0; i < tableList.length; i++) {
             JButton centrale = new JButton(tableList[i]);
             centrale.addActionListener(listener);
-            centrale.setEnabled(!tableList.equals("employees"));
+            centrale.setEnabled(!tableList.equals(tableList[0]));
             centrale.setBorder(null);
             panel.add(centrale);
         }
