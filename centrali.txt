@@ -1,0 +1,46 @@
+<centrale>
+	codice=1045;
+	indirizzo=padova;
+	potenza=10.0;
+	prov=pd;
+	isActive=true;
+	<produzione>
+			codice=1045;
+			anno=2016;
+			mese=3;
+			potenza=2.0;
+	</produzione>
+</centrale>
+<centrale>
+	codice=1046;
+	indirizzo=roma;
+	potenza=8.0;
+	prov=rm;
+	isActive=true;
+	<produzione>
+			codice=1046;
+			anno=2016;
+			mese=4;
+			potenza=20.0;
+	</produzione>
+</centrale>
+<centrale>
+	codice=1048;
+	indirizzo=mirano;
+	potenza=17.0;
+	prov=ve;
+	isActive=true;
+	<produzione>
+			codice=1048;
+			anno=2017;
+			mese=4;
+			potenza=15.0;
+	</produzione>
+</centrale>
+<centrale>
+	codice=1049;
+	indirizzo=tessera;
+	potenza=13.0;
+	prov=te;
+	isActive=true;
+</centrale>
