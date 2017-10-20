@@ -10,6 +10,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JTextArea;
 
 /**
  *
@@ -34,23 +35,15 @@ public class Query {
     public Relazione sendSelect(String qrySel) {
         Relazione rel = null;
         Statement stmt2 = null;
-        //String qrySel = "SELECT * FROM locations";
-        //String qrySel = "INSERT INTO departments VALUES (271, 'Jefrry', 888, 2300)";
         try {
             stmt2 = conn.createStatement();
             ResultSet rs = stmt2.executeQuery(qrySel);
-            //elaboro il risultato della select
-            //System.out.println("\n\nRisultati della select:\n");
             ResultSetMetaData rsmd = rs.getMetaData();
 
             String[] column = new String[rsmd.getColumnCount()];
             for (int i = 1; i <= rsmd.getColumnCount(); i++) {
                 column[i - 1] = rsmd.getColumnName(i);
             }
-            /*for (int i = 0; i < column.length; i++) {
-                System.out.print("\t" + column[i]);
-            }*/
-            //System.out.println("");
 
             ArrayList<String[]> row = new ArrayList<>();
 
@@ -58,10 +51,8 @@ public class Query {
                 String[] riga = new String[column.length];
                 for (int i = 0; i < riga.length; i++) {
                     riga[i] = rs.getString(column[i]);
-                    //System.out.print("\t" + riga[i]);
                 }
                 row.add(riga);
-                //System.out.println("");
             }
             String[][] value = new String[row.size()][column.length];
             for (int i = 0; i < row.size(); i++) {
@@ -69,9 +60,11 @@ public class Query {
             }
 
             rel = new Relazione(column, value);
+            //Gui.console.setText(qrySel+"\nEseguita correttamente");
         } catch (SQLException se) {
             System.out.println("ERRORE durante SELECT");
             System.out.println("Codice Errore: " + se.getErrorCode() + " " + se.getMessage());
+            Gui.console.setText(se.getErrorCode() + " " + se.getMessage());
         }
         return rel;
     }
@@ -95,27 +88,60 @@ public class Query {
         return tableList;
     }
 
-
     public void sendRemove(String delete) {
-        try{
+        try {
             PreparedStatement st = conn.prepareStatement(delete);
             st.executeUpdate();
-            System.out.println("\n\nDELETE eseguita con successo.");
-        }catch(SQLException se){
+            //System.out.println("\n\nDELETE eseguita con successo.");
+            Gui.console.setText(delete+"\nEseguita correttamente");
+        } catch (SQLException se) {
             System.out.println("ERRORE durante DELETE");
             System.out.println("Codice Errore: " + se.getErrorCode() + " " + se.getMessage());
+            Gui.console.setText(se.getErrorCode() + " " + se.getMessage());
         }
     }
 
     public void sendInsert(String query) {
         Statement stmt1 = null;
-        try{
+        try {
             stmt1 = conn.createStatement();
             stmt1.executeUpdate(query);
-        }catch(SQLException se){
+            Gui.console.setText(query+"\nEseguita correttamente");
+        } catch (SQLException se) {
             System.out.println("ERRORE durante INSERT INTO");
             System.out.println("Codice Errore: " + se.getErrorCode() + " " + se.getMessage());
+            Gui.console.setText(se.getErrorCode() + " " + se.getMessage());
         }
+    }
+
+    public static String toDelete(String[] valoriScomposti, String[] columnName) {
+        String delete = "DELETE FROM " + Gui.table + " WHERE ";
+        for (int i = 0; i < valoriScomposti.length; i++) {
+            delete += Gui.table + "." + columnName[i] + "=";
+            delete += (valoriScomposti[i].charAt(0) <= '9' && valoriScomposti[i].charAt(0) >= '0' ? valoriScomposti[i] : "'" + valoriScomposti[i] + "'") + " ";
+            if (i < valoriScomposti.length - 1) {
+                delete += "AND ";
+            }
+        }
+
+        System.out.println("DELETE: " + delete);
+
+        return delete;
+    }
+
+    public static String toInsert(String[] valoriScomposti, ArrayList<JTextArea> listaAree) {
+        String query = "insert into " + Gui.table + " values (";
+        for (int i = 0; i < valoriScomposti.length; i++) {
+            query += (listaAree.get(i).getText().charAt(0) >= '0' && listaAree.get(i).getText().charAt(0) <= '9' ? listaAree.get(i).getText() : "'" + listaAree.get(i).getText() + "'");
+            if (i < listaAree.size() - 1) {
+                query += ",";
+            }
+        }
+        query += ")";
+
+        System.out.println("INSERT: " + query);
+
+        return query;
     }
 
 }

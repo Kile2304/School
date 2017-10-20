@@ -55,27 +55,12 @@ public final class InsertPanel extends JPanel {
 
         JButton b = new JButton("query");
         b.addActionListener((ActionEvent e) -> {
-            String delete = "DELETE FROM " + Gui.table + " WHERE ";
-            for (int i = 0; i < valoriScomposti.length; i++) {
-                delete += Gui.table+"."+columnName[i] + "=" + valoriScomposti[i] + " ";
-                if (i < valoriScomposti.length - 1) {
-                    delete += "AND ";
-                }
-            }
-            System.out.println("" + delete);
-            //new Query().sendRemove(delete);
+            
             Query q = new Query();
-            q.sendRemove(delete);
-            /*String query = "insert into " + Gui.table + " values (";
-            for (int i = 0; i < valoriScomposti.length; i++) {
-                query += listaAree.get(i).getText();
-                if (i < listaAree.size() - 1) {
-                    query += ",";
-                }
-            }
-            query += ")";
-            System.out.println("" + query);
-            new Query().sendInsert(query);*/
+            q.sendRemove(Query.toDelete(valoriScomposti, columnName));
+            
+            /*q = new Query();
+            q.sendInsert(Query.toInsert(valoriScomposti, listaAree));*/
             g.eastNormal();
         });
 

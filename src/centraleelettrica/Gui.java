@@ -1,10 +1,13 @@
 package centraleelettrica;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -12,6 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.border.Border;
 
 /**
  *
@@ -25,7 +29,7 @@ public class Gui extends JFrame {
     private JTextArea cmd;
 
     private JPanel east;
-    
+
     private JPanel west;
 
     private static Gui g;
@@ -35,8 +39,10 @@ public class Gui extends JFrame {
     private static final int TESTHEIGHT = 1080;
 
     private JScrollPane scroll;
-    
+
     public static String table = "";
+
+    public static JTextArea console;
 
     public Gui() {
         super("Centrale Idroelettrica");
@@ -51,14 +57,26 @@ public class Gui extends JFrame {
         int height = device.getFullScreenWindow().getHeight();
         setSize(width, height);
 
-
         west = west();
         add(west, BorderLayout.WEST);
 
         east = new JPanel();
-
-        eastNormal();
         
+        console = new JTextArea();
+        Border border = BorderFactory.createLineBorder(Color.BLACK);
+        console.setBorder(BorderFactory.createCompoundBorder(border,
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+        console.setCaretPosition(0);
+        console.setLineWrap(true);
+        console.setWrapStyleWord(true);
+        console.setAutoscrolls(true);
+        console.setEditable(false);
+        
+        JScrollPane roll = new JScrollPane(console);
+        roll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        
+        eastNormal();
+
         t = new Table(this);
         t.aggiornaTabella(null);
         t.setPreferredSize(new Dimension(width, height));
@@ -68,7 +86,17 @@ public class Gui extends JFrame {
         scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
-        add(scroll, BorderLayout.CENTER);
+        JPanel center = new JPanel();
+        center.setLayout(new BorderLayout());
+        center.setPreferredSize(new Dimension(scroll.getWidth(), scroll.getHeight()));
+
+        center.add(scroll, BorderLayout.CENTER);
+
+        roll.setPreferredSize(new Dimension(scroll.getWidth(), adaptHeight(200)));
+        console.setPreferredSize(new Dimension(scroll.getWidth(), adaptHeight(500)));
+        center.add(roll, BorderLayout.SOUTH);
+
+        add(center, BorderLayout.CENTER);
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
@@ -77,7 +105,7 @@ public class Gui extends JFrame {
 
     public void changeEnable(boolean aggiorna, String table) {
         Gui.table = table;
-        Relazione rel = new Query().sendSelect("select * from "+table);
+        Relazione rel = new Query().sendSelect("select * from " + table);
         t.aggiornaTabella(rel);
     }
 
@@ -101,7 +129,9 @@ public class Gui extends JFrame {
 
         JButton command = new JButton("query");
         command.addActionListener((ActionEvent e) -> {
-            Relazione rel = new Query().sendSelect(cmd.getText());
+            CentraleElettrica ce = new CentraleElettrica();
+            ce.action(cmd.getText());
+            Relazione rel = ce.getRelazione();
             t.aggiornaTabella(rel);
         });
         panel.add(command, BorderLayout.SOUTH);
@@ -119,14 +149,13 @@ public class Gui extends JFrame {
 
         /*JPanel eastSouth = eastSouth();
         east.add(eastSouth, BorderLayout.SOUTH);*/
-
         revalidate();
         repaint();
     }
 
     public void eastInsertCentrale(String[] name, String valori) {
         if (isNormal) {
-            
+
             east.removeAll();
 
             InsertPanel p = new InsertPanel(name, valori, this);
@@ -139,7 +168,7 @@ public class Gui extends JFrame {
             eastNormal();
         }
     }
-    
+
     /*private JPanel eastSouth() {
         JPanel panel = new JPanel();
 
@@ -172,7 +201,6 @@ public class Gui extends JFrame {
         return panel;
 
     }*/
-
     private JPanel west() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -180,7 +208,7 @@ public class Gui extends JFrame {
         String[] tableList = new Query().getTable();
 
         Gui.table = tableList[0];
-        
+
         for (int i = 0; i < tableList.length; i++) {
             JButton centrale = new JButton(tableList[i]);
             centrale.addActionListener(listener);
@@ -191,8 +219,8 @@ public class Gui extends JFrame {
 
         return panel;
     }
-    
-    public JScrollPane getScroll(){
+
+    public JScrollPane getScroll() {
         return scroll;
     }
 
@@ -204,8 +232,8 @@ public class Gui extends JFrame {
         return device.getFullScreenWindow().getHeight() * val / TESTHEIGHT;
     }
 
-    public JPanel getPanelWest(){
+    public JPanel getPanelWest() {
         return west;
     }
-    
+
 }

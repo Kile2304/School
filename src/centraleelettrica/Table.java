@@ -87,11 +87,7 @@ class Table extends JPanel implements ActionListener {
 
                 JButton delete = new JButton("-");
 
-                String where = null;
-                for (int k = 0; k < temp.length; k++) {
-                    where += columnName[k] + "=" + temp[k];
-                }
-                delete.setActionCommand("delete * from " + Gui.table + " where " + where);
+                delete.setActionCommand("delete "+valori);
 
                 delete.setMargin(null);
                 delete.setBounds(tot + PIXEL / 3 * 2, y - PIXEL / 2, PIXEL * 2, PIXEL / 2);
@@ -177,9 +173,13 @@ class Table extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         String[] c = e.getActionCommand().split(" ");
         Relazione rel = null;
-        if (c.equals("delete")) {
-            new Query().sendRemove(e.getActionCommand());
+        System.out.println(""+c[0]);
+        if (c[0].equals("delete")) {
+            Query q = new Query();
+            String[] split = (e.getActionCommand().replace("delete ", "")).split(" ");
+            q.sendRemove(Query.toDelete(split, columnName));
             rel = new Query().sendSelect("select * from "+Gui.table);
+            aggiornaTabella(rel);
         } else {
             gui.eastInsertCentrale(columnName, e.getActionCommand());
         }
