@@ -3,9 +3,11 @@ package centraleelettrica;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 /**
@@ -14,112 +16,67 @@ import javax.swing.JTextField;
  */
 public final class InsertPanel extends JPanel {
 
-    private final String command;
     private final Gui g;
 
-    private final boolean remove;
-
-    private JTextField primo, secondo, terzo, quarto, quinto;
-    
     private static final JButton indietro = new JButton("Indietro");
 
-    public InsertPanel(String command, final Gui g) {
+    private ArrayList<JTextArea> listaAree;
+
+    public InsertPanel(String[] columnName, String valori, final Gui g) {
         super();
         //setPreferredSize(new Dimension(300, 100));
-        this.command = command;
         this.g = g;
-        
-        indietro.addActionListener(new ActionListener(){
+
+        indietro.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 g.eastNormal();
             }
-            
+
         });
 
-        String com[] = command.split(" ");
+        listaAree = new ArrayList<>();
 
-        remove = com[0].equals("remove");
+        interfaccia(columnName, valori);
 
-        if (com[1].equals("centrale")) {
-            centrale();
-        } else {
-            production();
-        }
     }
 
-    public void centrale() {
+    public void interfaccia(String[] columnName, String valori) {
 
-        setLayout(new GridLayout(2, 2));
+        setLayout(new GridLayout(columnName.length * 2, 2));
 
-        add(new JLabel("Inserisci il codice"));
-        primo = new JTextField();
-        add(primo);
-
-        if (!remove) {
-            setLayout(new GridLayout(6, 2));
-            add(new JLabel("Inserisci l'indirizzo"));
-            secondo = new JTextField();
-            add(secondo);
-
-            add(new JLabel("Inserisci la provincia"));
-            terzo = new JTextField();
-            add(terzo);
-
-            add(new JLabel("Inserisci la potenza"));
-            quarto = new JTextField();
-            add(quarto);
-
-            add(new JLabel("Inserisci se e' attivo"));
-            quinto = new JTextField();
-            add(quinto);
+        String[] valoriScomposti = valori.split(" ");
+        for (int i = 0; i < columnName.length; i++) {
+            add(new JLabel(columnName[i]));
+            JTextArea area = new JTextArea(valoriScomposti[i]);
+            listaAree.add(area);
+            add(area);
         }
+
         JButton b = new JButton("query");
         b.addActionListener((ActionEvent e) -> {
-            /*CentraleElettrica ce = new CentraleElettrica(true);
-            if (!remove) {
-                ce.action(command + " " + primo.getText() + " " + secondo.getText() + " " + terzo.getText() + " " + quarto.getText() + " " + quinto.getText());
-            } else {
-                ce.action(command + " " + primo.getText());
+            String delete = "DELETE FROM " + Gui.table + " WHERE ";
+            for (int i = 0; i < valoriScomposti.length; i++) {
+                delete += Gui.table+"."+columnName[i] + "=" + valoriScomposti[i] + " ";
+                if (i < valoriScomposti.length - 1) {
+                    delete += "AND ";
+                }
             }
-            g.getTable().aggiornaTabella();*/
-        });
-        
-        add(b);
-        add(indietro);
-    }
-
-    public void production() {
-        setLayout(new GridLayout(4, 2));
-
-        add(new JLabel("Inserisci il codice"));
-        primo = new JTextField();
-        add(primo);
-
-        add(new JLabel("Inserisci l'anno"));
-        secondo = new JTextField();
-        add(secondo);
-
-        add(new JLabel("Inserisci il mese"));
-        terzo = new JTextField();
-        add(terzo);
-
-        if (!remove) {
-        setLayout(new GridLayout(5, 2));
-            add(new JLabel("Inserisci la potenza"));
-            quarto = new JTextField();
-            add(quarto);
-        }
-        JButton b = new JButton("query");
-        b.addActionListener((ActionEvent e) -> {
-            /*CentraleElettrica ce = new CentraleElettrica(true);
-            if (!remove) {
-                ce.action(command + " " + primo.getText() + " " + secondo.getText() + " " + terzo.getText() + " " + quarto.getText());
-            } else {
-                ce.action(command + " " + primo.getText() + " " + secondo.getText() + " " + terzo.getText());
-                
+            System.out.println("" + delete);
+            //new Query().sendRemove(delete);
+            Query q = new Query();
+            q.sendRemove(delete);
+            /*String query = "insert into " + Gui.table + " values (";
+            for (int i = 0; i < valoriScomposti.length; i++) {
+                query += listaAree.get(i).getText();
+                if (i < listaAree.size() - 1) {
+                    query += ",";
+                }
             }
-            g.getTable().aggiornaTabella();*/
+            query += ")";
+            System.out.println("" + query);
+            new Query().sendInsert(query);*/
+            g.eastNormal();
         });
 
         add(b);

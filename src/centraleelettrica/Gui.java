@@ -59,7 +59,7 @@ public class Gui extends JFrame {
 
         eastNormal();
         
-        t = new Table();
+        t = new Table(this);
         t.aggiornaTabella(null);
         t.setPreferredSize(new Dimension(width, height));
 
@@ -85,7 +85,7 @@ public class Gui extends JFrame {
         JPanel panel = new JPanel();
 
         //panel.setPreferredSize(new Dimension(400, 720));
-        panel.setPreferredSize(new Dimension(east.getWidth(), adaptHeight(720)));
+        panel.setPreferredSize(new Dimension(350, adaptHeight(720)));
         //panel.setPreferredSize(new Dimension(east.getWidth(), 720));
         panel.setLayout(new BorderLayout());
 
@@ -117,28 +117,19 @@ public class Gui extends JFrame {
         JPanel eastNorth = eastNorth();
         east.add(eastNorth, BorderLayout.NORTH);
 
-        JPanel eastSouth = eastSouth();
-        east.add(eastSouth, BorderLayout.SOUTH);
+        /*JPanel eastSouth = eastSouth();
+        east.add(eastSouth, BorderLayout.SOUTH);*/
 
         revalidate();
         repaint();
     }
 
-    private void eastInsertCentrale(boolean isCentrale, boolean remove) {
+    public void eastInsertCentrale(String[] name, String valori) {
         if (isNormal) {
-            String query = "";
-            if (remove) {
-                query += "remove ";
-            } else {
-                query += "insert ";
-            }
+            
             east.removeAll();
-            if (isCentrale) {
-                query += "centrale";
-            } else {
-                query += "production";
-            }
-            InsertPanel p = new InsertPanel(query, this);
+
+            InsertPanel p = new InsertPanel(name, valori, this);
             p.setPreferredSize(new Dimension(east.getWidth(), east.getHeight() / 3));
             east.add(p, BorderLayout.NORTH);
 
@@ -148,8 +139,8 @@ public class Gui extends JFrame {
             eastNormal();
         }
     }
-
-    private JPanel eastSouth() {
+    
+    /*private JPanel eastSouth() {
         JPanel panel = new JPanel();
 
         panel.setLayout(new BorderLayout());
@@ -180,7 +171,7 @@ public class Gui extends JFrame {
 
         return panel;
 
-    }
+    }*/
 
     private JPanel west() {
         JPanel panel = new JPanel();
@@ -199,6 +190,10 @@ public class Gui extends JFrame {
         }
 
         return panel;
+    }
+    
+    public JScrollPane getScroll(){
+        return scroll;
     }
 
     public Table getTable() {

@@ -2,6 +2,7 @@ package centraleelettrica;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -95,8 +96,26 @@ public class Query {
     }
 
 
-    public Relazione sendRemove(String delete) {
-        return null;
+    public void sendRemove(String delete) {
+        try{
+            PreparedStatement st = conn.prepareStatement(delete);
+            st.executeUpdate();
+            System.out.println("\n\nDELETE eseguita con successo.");
+        }catch(SQLException se){
+            System.out.println("ERRORE durante DELETE");
+            System.out.println("Codice Errore: " + se.getErrorCode() + " " + se.getMessage());
+        }
+    }
+
+    public void sendInsert(String query) {
+        Statement stmt1 = null;
+        try{
+            stmt1 = conn.createStatement();
+            stmt1.executeUpdate(query);
+        }catch(SQLException se){
+            System.out.println("ERRORE durante INSERT INTO");
+            System.out.println("Codice Errore: " + se.getErrorCode() + " " + se.getMessage());
+        }
     }
 
 }

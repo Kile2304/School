@@ -18,7 +18,8 @@ public class Configurazione {
     private static final String USER = "5bin";
     private static final String PASSWORD = "5bin";
     //private static final String ADDRESS = "jdbc:mysql://192.168.1.252:3306/";
-    private static final String ADDRESS = "jdbc:mysql://80.22.95.8:3306/";
+    //private static final String ADDRESS = "jdbc:mysql://80.22.95.8:3306/";
+    private static final String ADDRESS = "jdbc:mysql://192.168.1.252:3306/";
     private static final int PORT = 3306;
     private static final String DB_NAME = "5bindb";
     

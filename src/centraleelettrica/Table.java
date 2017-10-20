@@ -8,7 +8,6 @@ import java.awt.Graphics;
 import java.awt.Robot;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
@@ -28,11 +27,14 @@ class Table extends JPanel implements ActionListener {
     private static int PIXEL = 64;
 
     private String[] columnName;
+    
+    private Gui gui;
 
     private static final String QUERY = "select * from ";
 
-    public Table() {
+    public Table(Gui gui) {
         isCentrale = true;
+        this.gui = gui;
     }
 
     @Override
@@ -60,12 +62,13 @@ class Table extends JPanel implements ActionListener {
         }
 
         int tot = 0;
-
         for (int i = 0; i < numero + 1; i++) {
             String[] temp = i == 0 ? columnName : text[i - 1];
 
             tot = 0;
             int y = i * PIXEL + (PIXEL / 4 * 3);
+            
+            String valori = "";
             for (int j = 0; j < columnName.length; j++) {
                 g.drawLine(tot, i * PIXEL, tot, (i + 1) * PIXEL);   //VERTICALE
 
@@ -78,7 +81,7 @@ class Table extends JPanel implements ActionListener {
 
                 g.drawString(temp[j], x + centramento, y);
                 tot += large[j] + large[j] / 4;
-
+                valori += temp[j]+" ";
             }
             if (i != 0) {
 
@@ -99,7 +102,8 @@ class Table extends JPanel implements ActionListener {
                 add(delete);
 
                 JButton modify = new JButton("+");
-                modify.setActionCommand("insert " + delete.getActionCommand());
+                
+                modify.setActionCommand(valori);
                 modify.setFont(new Font("default", Font.BOLD, 13));
                 modify.setMargin(null);
                 modify.setBounds(tot + PIXEL / 3 * 10, y - PIXEL / 2, PIXEL * 2, PIXEL / 2);
@@ -113,7 +117,6 @@ class Table extends JPanel implements ActionListener {
         }
 
         setPreferredSize(new Dimension(tot + 1 + PIXEL * 6, text.length * PIXEL));
-        revalidate();
 
     }
 
@@ -167,6 +170,7 @@ class Table extends JPanel implements ActionListener {
 
         numero = text.length;
         repaint();
+        revalidate();
     }
 
     @Override
@@ -174,13 +178,10 @@ class Table extends JPanel implements ActionListener {
         String[] c = e.getActionCommand().split(" ");
         Relazione rel = null;
         if (c.equals("delete")) {
-            rel = new Query().sendRemove(e.getActionCommand());
+            new Query().sendRemove(e.getActionCommand());
+            rel = new Query().sendSelect("select * from "+Gui.table);
         } else {
-            String delete = "";
-            for (int i = 0; i < c.length; i++) {
-                delete += c[i] + " ";
-            }
-            rel = new Query().sendRemove(delete);
+            gui.eastInsertCentrale(columnName, e.getActionCommand());
         }
     }
 
