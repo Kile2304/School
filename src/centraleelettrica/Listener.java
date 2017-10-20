@@ -23,6 +23,7 @@ public class Listener implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        Table.personalized = false;
         change(e.getActionCommand(), true);
     }
 

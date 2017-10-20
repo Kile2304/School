@@ -10,6 +10,12 @@ public class CentraleElettrica {
     
     public void action(String command) {
        Query q = new Query();
+       Table.personalized = true;
+       new Thread(){
+           public void run(){
+               Listener.change("", false);
+           }
+       }.start();
        switch(command.split(" ")[0].toLowerCase()){
            case "select":
                rel = q.sendSelect(command);

@@ -61,7 +61,7 @@ public class Gui extends JFrame {
         add(west, BorderLayout.WEST);
 
         east = new JPanel();
-        
+
         console = new JTextArea();
         Border border = BorderFactory.createLineBorder(Color.BLACK);
         console.setBorder(BorderFactory.createCompoundBorder(border,
@@ -71,10 +71,10 @@ public class Gui extends JFrame {
         console.setWrapStyleWord(true);
         console.setAutoscrolls(true);
         console.setEditable(false);
-        
+
         JScrollPane roll = new JScrollPane(console);
         roll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        
+
         eastNormal();
 
         t = new Table(this);
@@ -105,8 +105,10 @@ public class Gui extends JFrame {
 
     public void changeEnable(boolean aggiorna, String table) {
         Gui.table = table;
-        Relazione rel = new Query().sendSelect("select * from " + table);
-        t.aggiornaTabella(rel);
+        if (!table.equals("")) {
+            Relazione rel = new Query().sendSelect("select * from " + table);
+            t.aggiornaTabella(rel);
+        }
     }
 
     private JPanel eastNorth() {

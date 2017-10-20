@@ -31,6 +31,8 @@ class Table extends JPanel implements ActionListener {
     private Gui gui;
 
     private static final String QUERY = "select * from ";
+    
+    public static boolean personalized = false;
 
     public Table(Gui gui) {
         isCentrale = true;
@@ -83,7 +85,7 @@ class Table extends JPanel implements ActionListener {
                 tot += large[j] + large[j] / 4;
                 valori += temp[j]+" ";
             }
-            if (i != 0) {
+            if (i != 0 && !Table.personalized) {
 
                 JButton delete = new JButton("-");
 
